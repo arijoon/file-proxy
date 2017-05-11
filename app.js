@@ -63,13 +63,19 @@ app.get('/file/:key', (req, res) => {
     }).then(filename => {
         
         console.log("Sending back the file ..");
-        res.sendFile(filename);
+
+        res.sendFile(__dirname + '/' + filename, {}, (err) => {
+            if(err) console.error(err);
+            else {
+                console.log('sent file,', filename);
+            }
+
+        });
 
     }).catch(err => {
         console.error('Error downloading the file', err);
 
         res.status(500)
-            .statusMessage("Error in download")
             .send(err);
     });
 });
