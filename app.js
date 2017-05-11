@@ -48,7 +48,7 @@ app.get('/file/:key', (req, res) => {
     getFile(req.query.add)
         .then(res => {
             return new Promise((resolve, reject) => {
-                let filename = tempPath + '/' + `down_${Math.floor(Math.random()*100000)}.zip`;
+                let filename = tempPath + '/' + `down_${Date.now()}_${Math.floor(Math.random()*10)}.zip`;
                 let file = fs.createWriteStream(filename);
 
                 res.pipe(file);
