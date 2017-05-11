@@ -1,6 +1,7 @@
 let express = require('express'),
     http = require('http'),
     https = require('https'),
+    path = require('path'),
     fs = require('fs');
 
 let app = express();
@@ -34,11 +35,38 @@ app.get('/files/', (req, res) => {
     });
 });
 
-app.get('/file/:key', (req, res) => {
-    if (req.params.key != getKey()) {
-        res.status(404).end();
+app.get('/remove', (req, res) => {
+
+    if(!verifyKey(req.query.key, res)) return;
+
+    let filename = path.join(tempPath, req.query.name);
+    if(!req.query.name || !fs.existsSync(filename)) {
+        res.status(404)
+            .send(`File not found`);
         return;
     }
+
+    if(/[\/\\]/.test(req.query.name)) {
+        res.status(400)
+            .send();
+        return;
+    }
+
+    fs.unlink(filename, (err) => {
+        if(err) {
+            res.status(500)
+                .send(err);
+            return;
+        }
+
+        res.status(200)
+            .send(`Removed ${filename}`);
+    });
+});
+
+app.get('/file/:key', (req, res) => {
+
+    if(!verifyKey(req.params.key, res)) return;
 
     if(!req.query.add) {
         res.status(400).end();
@@ -85,6 +113,16 @@ app.listen(port);
 
 console.log(`[${process.pid}] Listening on port ${port}`);
 
+function verifyKey(key, res) {
+    if(key == getKey()) {
+        return true;
+    }
+
+    res.status(403)
+        .end();
+
+    return false;
+}
 
 function getKey() {
     return require('./key.secret.json').key;
