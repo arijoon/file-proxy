@@ -7,9 +7,32 @@ let app = express();
 
 let tempPath = 'tmp';
 
-let port = process.env.PORT || 8001;
+let port = process.env.PORT || require('./key.secret.json').port;
 
 let httpsReg = /https:\/\//;
+
+app.get('/files/', (req, res) => {
+    fs.readdir(tempPath, (err, files) => {
+
+        if(err) {
+            res.status(500).end();
+            console.error(err);
+            return;
+        }
+
+        let msg = "*******************************************************************************<br />";
+        msg += "********************** <strong>If you aren't meant to be here piss off</strong> ************************<br />";
+        msg += "*******************************************************************************";
+        msg += '<br /><ul>';
+
+        files.forEach(file => {
+            msg += `<li>${file}</li>`;
+        });
+        msg += "</ul>";
+
+        res.send(msg);
+    });
+});
 
 app.get('/file/:key', (req, res) => {
     if (req.params.key != getKey()) {
