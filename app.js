@@ -65,9 +65,9 @@ app.get('/remove', (req, res) => {
     });
 });
 
-app.get('/file/:key', (req, res) => {
+app.get('/file', (req, res) => {
 
-    if(!verifyKey(req.params.key, res)) return;
+    if(!verifyKey(req.query.key, res)) return;
 
     if(!req.query.add) {
         res.status(400).end();
@@ -115,10 +115,20 @@ app.get('/file/:key', (req, res) => {
 
         res.status(500)
             .send(err);
-    });
+        });
+});
+
+app.set('views', __dirname + "/views");
+app.set('view engine', 'pug');
+
+app.get('/app-ui', function (req, res) {
+    listFiles().then(files => {
+        res.render('index', { files: files });
+    }).catch(err => res.status(500).send());
 });
 
 app.use(express.static(__dirname + '/tmp'));
+app.use(express.static(__dirname + '/views'));
 app.listen(port);
 
 console.log(`[${process.pid}] Listening on port ${port}`);
@@ -172,6 +182,15 @@ function getFile(url) {
             resolve(response);
         }).on('error', function (err) {
             reject(err);
+        });
+    });
+}
+
+function listFiles() {
+    return new Promise((resolve, reject) => {
+        fs.readdir(tempPath, (err, files) => {
+            if(err) reject(err);
+            else resolve(files);
         });
     });
 }

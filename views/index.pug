@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col-md-8
+        h1 Get file
+        form(method="GET", action="/file")
+          .form-group
+            label Key
+            input(type="text", name="key", class="form-control", id="key")
+
+          .form-group
+            label Address
+            input(type="text", name="add", class="form-control")
+
+          button(type="submit", value="Submit", class="btn btn-success") Submit
+      .col-md-4
+        h1 Remove Files
+        uls.list-group
+          for file in files
+            li.list-group-item=file
+              span.remover.red.pull-right.glyphicon.glyphicon-remove(data-target=file)
+
+  
