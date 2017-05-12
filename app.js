@@ -2,6 +2,7 @@ let express = require('express'),
     http = require('http'),
     https = require('https'),
     path = require('path'),
+    archiver = require('archiver'),
     fs = require('fs');
 
 let app = express();
@@ -76,16 +77,24 @@ app.get('/file/:key', (req, res) => {
     getFile(req.query.add)
         .then(res => {
             return new Promise((resolve, reject) => {
-                let filename = tempPath + '/' + `down_${Date.now()}_${Math.floor(Math.random()*10)}.zip`;
+                let filename = tempPath + '/' + `down_${Date.now()}_${Math.floor(Math.random()*10)}`;
                 let file = fs.createWriteStream(filename);
 
                 res.pipe(file);
 
                 file.on('finish', function () {
-                    file.close(() => resolve(filename));
+                    file.close();
+
+                    zipUp(filename)
+                        .then((f) => {
+                            resolve(f); fs.unlink(filename);
+                        }).catch(err => reject(err));
                 });
 
-                file.on('error', () => reject());
+                file.on('error', (err) => { 
+                    fs.unlink(filename);
+                    reject(err);
+                });
             });
 
     }).then(filename => {
@@ -122,6 +131,33 @@ function verifyKey(key, res) {
         .end();
 
     return false;
+}
+
+function zipUp(filename) {
+    return new Promise((resolve, reject) => {
+        var archive = archiver('zip', {
+            zlib: { level: 0 } // Sets the compression level.
+        });
+
+        var output = fs.createWriteStream(`${filename}.zip`);
+
+        output.on('close', function () {
+            console.log(archive.pointer() + ' total bytes');
+            fs.unlink(filename);
+
+            resolve(`${filename}.zip`);
+        });
+
+        archive.on('error', function(err) {
+            reject(err);
+        });
+
+        archive.pipe(output);
+
+        archive.file(filename, { name: 'your_file' });
+
+        archive.finalize();
+    });
 }
 
 function getKey() {
