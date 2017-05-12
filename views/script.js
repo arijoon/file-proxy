@@ -7,4 +7,13 @@ $(document).ready(() => {
             window.open(`/remove?name=${encodeURIComponent(filename)}&key=${encodeURIComponent($('#key').val())}`);
         });
     });
+
+    $('.downloader').each((i, v) => {
+        var self = $(v);
+        self.on('click', (event) => {
+            var filename = self.data('target');
+
+            window.open(`/${filename}`);
+        });
+    });
 });

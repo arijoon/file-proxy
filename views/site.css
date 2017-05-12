@@ -1,3 +1,5 @@
 .container { margin-top: 50px; }
 .red { color: darkred; }
 .red:hover { color: red; }
+.downloader { padding-right: 10px; color: darkslategrey; }
+.downloader:hover { padding-right: 10px; color: darkblue; }

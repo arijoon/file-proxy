@@ -14,12 +14,13 @@ block content
             label Address
             input(type="text", name="add", class="form-control")
 
-          button(type="submit", value="Submit", class="btn btn-success") Submit
+          button(type="submit", value="Download", class="btn btn-success") Download
       .col-md-4
         h1 Remove Files
         uls.list-group
           for file in files
             li.list-group-item=file
               span.remover.red.pull-right.glyphicon.glyphicon-remove(data-target=file)
-
+              span.downloader.pull-right.glyphicon.glyphicon-download-alt(data-target=file) 
+              
   
