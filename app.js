@@ -87,7 +87,8 @@ app.get('/file/:key', (req, res) => {
 
                     zipUp(filename)
                         .then((f) => {
-                            resolve(f); fs.unlink(filename);
+                            resolve(f);
+                            fs.unlink(filename);
                         }).catch(err => reject(err));
                 });
 
@@ -143,7 +144,6 @@ function zipUp(filename) {
 
         output.on('close', function () {
             console.log(archive.pointer() + ' total bytes');
-            fs.unlink(filename);
 
             resolve(`${filename}.zip`);
         });
