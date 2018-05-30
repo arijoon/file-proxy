@@ -171,7 +171,7 @@ function zipUp(filename) {
 }
 
 function getKey() {
-    return require('./key.secret.json').key;
+    return process.env.FILE_PROXY_KEY || require('./key.secret.json').key;
 }
 
 function getFile(url) {
