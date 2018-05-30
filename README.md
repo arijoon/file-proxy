@@ -1,4 +1,4 @@
-# Proxy to save file's as Zip and allow downloading
+# Proxy to save files as Zip and allow downloading
 
 ## How to run
 
